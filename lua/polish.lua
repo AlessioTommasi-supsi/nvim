@@ -2,12 +2,6 @@
 -- This is just pure lua so anything that doesn't
 -- fit in the normal config locations above can go here
 
--- Fix treesitter compiler for Windows
-local install = require("nvim-treesitter.install")
-install.compilers = { "gcc" }
-install.prefer_git = true
-vim.env.CC = "C:\\Users\\TOMALE\\AppData\\Local\\nvim\\zig-cc.bat"
-
 -- Native Auto-save
 -- This is more robust than a plugin and has zero overhead.
 -- It saves when:
@@ -21,3 +15,12 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "FocusLost" }, {
     end
   end,
 })
+
+
+-- Il primo tasto (button 7 / laterale) attiva la modalità INSERIMENTO
+-- Nota: se il terminale non legge X2Mouse, prova a sostituirlo con ScrollWheelRight
+vim.keymap.set("n", "<F12>", "i", { desc = "Entra in inserimento tramite mouse mappato" })
+-- Il secondo tasto (button 2 / centrale) attiva la modalità ESC
+vim.keymap.set("i", "<MiddleMouse>", "<Esc>", { desc = "Esci in modalità normale con tasto centrale" })
+vim.keymap.set("n", "<MiddleMouse>", "<Esc>", { desc = "Annulla azioni in modalità normale" })
+
