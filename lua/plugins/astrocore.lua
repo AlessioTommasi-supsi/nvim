@@ -3,52 +3,45 @@ return {
   "AstroNvim/astrocore",
   ---@type AstroCoreOpts
   opts = {
-    -- Configure core features of AstroNvim
     features = {
-      large_buf = { size = 1024 * 256, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
-      autopairs = true, -- enable autopairs at start
-      cmp = true, -- enable completion at start
-      diagnostics = { virtual_text = true, virtual_lines = false }, -- diagnostic settings on startup
-      highlighturl = true, -- highlight URLs at start
-      notifications = true, -- enable notifications at start
+      large_buf = { size = 1024 * 256, lines = 10000 },
+      autopairs = true,
+      cmp = true,
+      diagnostics = { virtual_text = true, virtual_lines = false },
+      highlighturl = true,
+      notifications = true,
     },
-    -- AstroNvim Updater configuration
     updater = {
-      remote = "origin", -- remote to use
-      channel = "stable", -- "stable" or "nightly"
-      version = "latest", -- "latest", tag name, or nil
-      branch = "main", -- branch name (only used if channel is nightly)
-      commit = nil, -- commit hash (only used if channel is nightly)
-      pin_plugins = nil, -- true, false, or nil
-      skip_prompts = false, -- skip prompts about breaking changes
-      show_changelog = true, -- show changelog after update
-      auto_quit = false, -- automatically quit nvim after update
-      remotes = { -- easily add new remotes to track
-        -- [ "remote_name" ] = "https://github.com/user/repo.git", -- full remote url
-        -- [ "remote_name" ] = "user/repo", -- GitHub user/repo shortcut
-      },
+      remote = "origin",
+      channel = "stable",
+      version = "latest",
+      branch = "main",
+      commit = nil,
+      pin_plugins = nil,
+      skip_prompts = false,
+      show_changelog = true,
+      auto_quit = false,
+      remotes = {},
     },
-    -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
     diagnostics = {
       virtual_text = true,
       underline = true,
     },
-    -- vim options can be configured here
     options = {
-      opt = { -- vim.opt.<key>
-        relativenumber = true, -- sets vim.opt.relativenumber
-        number = true, -- sets vim.opt.number
-        spell = false, -- sets vim.opt.spell
-        signcolumn = "yes", -- sets vim.opt.signcolumn to yes
-        wrap = false, -- sets vim.opt.wrap
+      opt = {
+        relativenumber = true,
+        number = true,
+        spell = false,
+        signcolumn = "yes",
+        wrap = false,
       },
     },
-    -- Mappings can be configured through AstroCore as well.
     mappings = {
-      -- Normal mode mappings
+      -- -------------------------------------------------------------
+      -- NORMAL MODE (n)
+      -- -------------------------------------------------------------
       n = {
         ["<Leader>gv"] = { "<cmd>DiffviewOpen<cr>", desc = "Open Diffview" },
-        -- Modalità Normale: Apre Grug-far con la parola sotto il cursore pre-inserita
         ["<Leader>r"] = {
           function()
             require("grug-far").open({
@@ -60,7 +53,6 @@ return {
           end,
           desc = "Cerca e Sostituisci (Grug-far)"
         },
-        -- Apre Grug-far filtrato SOLO per il file corrente (parola sotto cursore)
         ["<Leader>rc"] = {
           function()
             require("grug-far").open({
@@ -73,9 +65,7 @@ return {
           end,
           desc = "Sostituisci nel file corrente (Grug-far)"
         },
-        -- 'w' per andare Su
         ["w"] = { "v:count == 0 ? 'gk' : 'k'", expr = true, desc = "Muovi cursore su" },
-        -- 's' per andare Giù
         ["s"] = { "v:count == 0 ? 'gj' : 'j'", expr = true, desc = "Muovi cursore giù" },
         ["<MiddleMouse>"] = { "i", desc = "Entra in Insert Mode" },
         ["<S-Up>"] = { "v<Up>", desc = "Seleziona in su" },
@@ -89,29 +79,28 @@ return {
         ["<C-z>"] = { "u", desc = "Annulla" },
         ["<C-S-Z>"] = { "<C-r>", desc = "shift annulla" },
         ["<C-\\>"] = { "gcc", remap = true, desc = "Commenta/Decommenta riga" },
+
+        -- Cambia Buffer con Alt + Frecce
+        ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
+        ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
+        
+        -- Ctrl + P per cercare i file
+        ["<C-p>"] = { "<cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
       },
-      -- Visual mode mappings
+
+      -- -------------------------------------------------------------
+      -- VISUAL MODE (v)
+      -- -------------------------------------------------------------
       v = {
-        -- Modalità Visuale: Prende la selezione (anche multiriga) e inserisce i flag
         ["<Leader>r"] = {
           function()
-            require("grug-far").with_visual_selection({
-              prefills = {
-                flags = "--multiline --fixed-strings"
-              }
-            })
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings" } })
           end,
           desc = "Sostituisci selezione multi-riga (Grug-far)"
         },
-        -- Modalità Visuale: filtrato SOLO per il file corrente + flag attivi
         ["<Leader>rc"] = { 
           function()
-            require("grug-far").with_visual_selection({ 
-              prefills = {
-                flags = "--multiline --fixed-strings",
-                paths = vim.fn.expand("%") 
-              } 
-            })
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings", paths = vim.fn.expand("%") } })
           end,
           desc = "Sostituisci selezione nel file corrente"
         },
@@ -129,8 +118,15 @@ return {
         ["<C-v>"] = { '"+p', desc = "Incolla da Windows" },
         ["<C-\\>"] = { "gc", remap = true, desc = "Commenta/Decommenta selezione" },
         ["<LeftMouse>"] = { "<S-LeftMouse>", desc = "Estendi selezione fino al clic" },
+
+        ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
+        ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
+        ["<C-p>"] = { "<esc><cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
       },
-      -- Insert mode mappings
+
+      -- -------------------------------------------------------------
+      -- INSERT MODE (i)
+      -- -------------------------------------------------------------
       i = {
         ["<MiddleMouse>"] = { "<Esc>", desc = "Torna in Normal Mode" },
         ["<S-Up>"] = { "<Esc>v<Up>", desc = "Seleziona in su" },
@@ -142,7 +138,20 @@ return {
         ["<C-S-Z>"] = { "<C-o><C-r>", desc = "shift annulla"},
         ["<C-v>"] = { "<C-r>+", desc = "Incolla da Windows" },
         ["<C-\\>"] = { "<C-o>gcc", remap = true, desc = "Commenta/Decommenta riga" },
+
+        ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
+        ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
+        ["<C-p>"] = { "<C-o><cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
       },
+
+      -- -------------------------------------------------------------
+      -- TERMINAL MODE (t)
+      -- -------------------------------------------------------------
+      t = {
+        ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
+        ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
+        ["<C-p>"] = { [[<C-\><C-n><cmd>Telescope find_files<cr>]], desc = "Trova file (Ctrl+P)" },
+      }
     },
   },
 }
