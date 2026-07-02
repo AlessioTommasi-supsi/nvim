@@ -65,6 +65,41 @@ return {
           end,
           desc = "Sostituisci nel file corrente (Grug-far)"
         },
+        ["<Leader>f"] = {
+          function()
+            require("grug-far").open({
+              prefills = { 
+                search = vim.fn.expand("<cword>"),
+                flags = "--multiline --fixed-strings" 
+              }
+            })
+          end,
+          desc = "Cerca e Sostituisci (Grug-far)"
+        },
+        ["<Leader>fc"] = {
+          function()
+            require("grug-far").open({
+              prefills = {
+                search = vim.fn.expand("<cword>"),
+                paths = vim.fn.expand("%"),
+                flags = "--multiline --fixed-strings" 
+              }
+            })
+          end,
+          desc = "Sostituisci nel file corrente (Grug-far)"
+        },
+        ["C-S-f"] = {
+          function()
+            require("grug-far").open({
+              prefills = {
+                search = vim.fn.expand("<cword>"),
+                paths = vim.fn.expand("%"),
+                flags = "--multiline --fixed-strings" 
+              }
+            })
+          end,
+          desc = "Sostituisci nel file corrente (Grug-far)"
+        },
         ["w"] = { "v:count == 0 ? 'gk' : 'k'", expr = true, desc = "Muovi cursore su" },
         ["s"] = { "v:count == 0 ? 'gj' : 'j'", expr = true, desc = "Muovi cursore giù" },
         ["<MiddleMouse>"] = { "i", desc = "Entra in Insert Mode" },
@@ -83,9 +118,9 @@ return {
         -- Cambia Buffer con Alt + Frecce
         ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
         ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
-        
         -- Ctrl + P per cercare i file
         ["<C-p>"] = { "<cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
+        ["<C-f>"] = { 'y/\\V', desc = "Cerca testo selezionato" },
       },
 
       -- -------------------------------------------------------------
@@ -104,6 +139,25 @@ return {
           end,
           desc = "Sostituisci selezione nel file corrente"
         },
+        ["<Leader>f"] = {
+          function()
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings" } })
+          end,
+          desc = "Sostituisci selezione multi-riga (Grug-far)"
+        },
+        ["<Leader>fc"] = { 
+          function()
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings", paths = vim.fn.expand("%") } })
+          end,
+          desc = "Sostituisci selezione nel file corrente"
+        },
+        ["C-S-f"] = { 
+          function()
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings", paths = vim.fn.expand("%") } })
+          end,
+          desc = "Sostituisci selezione nel file corrente"
+        },
+
         ["w"] = { "v:count == 0 ? 'gk' : 'k'", expr = true, desc = "Muovi cursore su" },
         ["s"] = { "v:count == 0 ? 'gj' : 'j'", expr = true, desc = "Muovi cursore giù" },
         ["<MiddleMouse>"] = { "<Esc>", desc = "Torna in Normal Mode" },
@@ -118,11 +172,14 @@ return {
         ["<C-v>"] = { '"+p', desc = "Incolla da Windows" },
         ["<C-\\>"] = { "gc", remap = true, desc = "Commenta/Decommenta selezione" },
         ["<LeftMouse>"] = { "<S-LeftMouse>", desc = "Estendi selezione fino al clic" },
-
+        -- Cerca la selezione visiva con Ctrl + F nativo e pulito
+        ["<C-f>"] = { 'y/\\V<C-r>"', desc = "Cerca testo selezionato" },
+ 
+        -- Ripristinati i vecchi mapping anche per la modalità Visuale
         ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
         ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
         ["<C-p>"] = { "<esc><cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
-      },
+      }, -- <-- QUESTA PARENTESI ERA SALTATA ED È STATA RIPRISTINATA CORRETTAMENTE
 
       -- -------------------------------------------------------------
       -- INSERT MODE (i)
@@ -142,6 +199,14 @@ return {
         ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
         ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
         ["<C-p>"] = { "<C-o><cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
+        ["<C-S-f>"] = { 
+          function()
+            require("grug-far").with_visual_selection({ prefills = { flags = "--multiline --fixed-strings", paths = vim.fn.expand("%") } })
+          end,
+          desc = "Sostituisci selezione nel file corrente"
+        },
+        -- apri cerca: Esc + / + Ctrl + R + " per cercare la parola sotto il cursore
+        ["<C-f>"] = {   '<Esc>/\\V', desc = "Apri Cerca " },
       },
 
       -- -------------------------------------------------------------
