@@ -121,6 +121,16 @@ return {
         -- Ctrl + P per cercare i file
         ["<C-p>"] = { "<cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
         ["<C-f>"] = { 'y/\\V', desc = "Cerca testo selezionato" },
+        -- Alt + f: Cerca la parola sotto il cursore in tutto il progetto
+          ["<M-f>"] = {
+            function()
+              -- Prende la parola sotto il cursore
+              local word = vim.fn.expand("<cword>")
+              -- La passa come testo modificabile in live_grep
+              require("telescope.builtin").live_grep({ default_text = word })
+            end,
+            desc = "Cerca parola sotto il cursore (modificabile)",
+          },
       },
 
       -- -------------------------------------------------------------
@@ -179,6 +189,18 @@ return {
         ["<A-Right>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Prossimo buffer" },
         ["<A-Left>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Buffer precedente" },
         ["<C-p>"] = { "<esc><cmd>Telescope find_files<cr>", desc = "Trova file (Ctrl+P)" },
+        -- Alt + f: Cerca il testo selezionato in tutto il progetto
+        ["<M-f>"] = {
+            function()
+              -- Estrae il testo selezionato visivamente
+              vim.cmd('normal! "vy')
+              local text = vim.fn.getreg("v")
+              -- Pulisce eventuali caratteri di escape
+              text = text:gsub("\n", "")
+              require("telescope.builtin").live_grep({ default_text = text })
+            end,
+            desc = "Cerca testo selezionato (modificabile)",
+          },
       }, -- <-- QUESTA PARENTESI ERA SALTATA ED È STATA RIPRISTINATA CORRETTAMENTE
 
       -- -------------------------------------------------------------
@@ -207,6 +229,18 @@ return {
         },
         -- apri cerca: Esc + / + Ctrl + R + " per cercare la parola sotto il cursore
         ["<C-f>"] = {   '<Esc>/\\V', desc = "Apri Cerca " },
+        -- Alt + f: Esce temporaneamente, cerca la parola e apre Telescope
+        ["<M-f>"] = {
+          function()
+            -- Forza l'uscita dalla modalità inserimento per aggiornare la posizione del cursore
+            vim.cmd("stopinsert")
+            require("telescope.builtin").grep_string()
+          end,
+          desc = "Cerca parola sotto il cursore (da Insert)",
+        },
+
+
+
       },
 
       -- -------------------------------------------------------------
